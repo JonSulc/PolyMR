@@ -1,0 +1,17 @@
+Package: PolyMR
+Type: Package
+Title: Polynomial Mendelian Randomization
+Version: 0.1
+Date: 2021-06-15
+Author: Jonathan Sulc <jonsulc@gmail.com>
+Maintainer: Zoltan Kutalik <zoltan.kutalik@gmail.com>
+Description: Performs polynomial Mendelian randomization for
+    the causal inference of non-linear effects.
+URL: https://github.com/JonSulc/PolyMR
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.1.1
+Imports:
+    lmtest,
+    stringr
