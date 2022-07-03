@@ -1,0 +1,17 @@
+citHeader("To cite PolyMR in publications use:")
+
+citEntry(
+  entry    = "Article",
+  title    = "Polynomial Mendelian Randomization reveals widespread non-linear causal effects in the UK Biobank",
+  author   = c("Jonathan Sulc", "Jennifer Sjaarda", "Zoltán Kutalik"),
+  journal  = "Human Genetics and Genomics Advances",
+  year     = 2022,
+  url      = "https://doi.org/10.1016/j.xhgg.2022.100124",
+  textVersion = paste(
+    "Sulc, J., Sjaarda, J. & Kutalik, Z.",
+    "Polynomial Mendelian Randomization reveals non-linear causal effects for",
+    "obesity-related traits.",
+    "Human Genetics and Genomics Advances 100124 (2022)",
+    "doi:10.1016/j.xhgg.2022.100124."
+  )
+)
