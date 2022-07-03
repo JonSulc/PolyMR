@@ -1,0 +1,22 @@
+Package: PolyMR
+Type: Package
+Title: Model Non-Linear Causal Effects Through Polynomial Regression
+Version: 2.0
+Author: Jonathan Sulc
+Maintainer: Jonathan Sulc <jonsulc@gmail.com>
+Description: Uses a control function-based approach to model non-linear causal
+    effects of an exposure on an outcome. The exposure is modeled linearly
+    from instrumental variables (i.e. genotypes), the control function of which
+    is used along with the exposure to model the outcome using polynomial
+    regression.
+URL: https://github.com/JonSulc/PolyMR
+License: GNU GPL 3
+Encoding: UTF-8
+LazyData: true
+Imports:
+  data.table,
+  lmtest
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+RoxygenNote: 7.2.0
