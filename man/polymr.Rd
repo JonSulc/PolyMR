@@ -87,7 +87,10 @@ be dropped. Default is TRUE. Only relevant if \code{p_thr_drop} < 1 or is
 NULL.}
 
 \item{reverse_t}{Threshold to use for reverse causality filtering (T
-statistic), NULL for no filtering (default).}
+statistic), NULL for no filtering (default). A value of 0 represents a
+simple filtering out of IVs explaining more variance in the outcome than
+the exposure, whereas a value of 1.645 (\code{qnorm(.95)}) would remove
+only those where that difference is significant (p < 0.05).}
 }
 \value{
 Returns a named list of results for PolyMR itself and the other
@@ -138,12 +141,12 @@ regression of observational data, correcting for confounding using an
 instrumental variable-based approach.
 }
 \examples{
-\dontrun{
-simulated_data <- new_PolyMRDataSim()
+simulated_data <- PolyMR:::new_PolyMRDataSim()
 polymr(exposure  = simulated_data$exposure,
        outcome   = simulated_data$outcome,
        genotypes = simulated_data$genotypes,
+       reverse_t_thr = 0,
        p_thr_drop = NULL)
-}
+
 
 }

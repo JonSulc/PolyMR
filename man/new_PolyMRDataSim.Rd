@@ -23,18 +23,19 @@ to the number of instruments as it includes SNPs which will be filtered out
 upon finalizing the data (see \code{gws_thr}).}
 
 \item{exposure_heritability}{Heritability of the exposure explained by the
-`n_exposure_snps` (default is 0.3).}
+\code{n_exposure_snps} (default is 0.3).}
 
 \item{causal_function}{Function defining the true relationship between the
 exposure and the outcome. It should accept a vector of exposure values and
 return a vector of outcome values of the same length. This represents the
 pure contribution of the exposure to the outcome and should not include
-confounding or noise. Default is \code{function(x) 0.1*x + 0.05 *x^2}. See
-also \link{get_polynomial_function}.}
+confounding or noise. Default is \code{function(x) 0.1*x + 0.05*x^2}. See
+also [get_polynomial_function()]}
 
-\item{confounders_list}{A list of objects of class \code{Confounder} to be
-added to the data. Default is a single confounder with linear contributions
-to both exposure and outcome with coefficients 0.2 and 0.5, respectively.}
+\item{confounders_list}{A list of objects of class \code{Confounder} (see
+[new_Confounder()]) to be added to the data. Default is a single confounder
+with linear contributions to both exposure and outcome with coefficients
+0.2 and 0.5, respectively.}
 
 \item{finalize}{Logical indicating whether the data set should be finalized,
 i.e. errors added to contribute remaining variance and SNPs filtered based

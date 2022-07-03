@@ -16,9 +16,10 @@
 #'   pure contribution of the exposure to the outcome and should not include
 #'   confounding or noise. Default is \code{function(x) 0.1*x + 0.05*x^2}. See
 #'   also [get_polynomial_function()]
-#' @param confounders_list A list of objects of class \code{Confounder} to be
-#'   added to the data. Default is a single confounder with linear contributions
-#'   to both exposure and outcome with coefficients 0.2 and 0.5, respectively.
+#' @param confounders_list A list of objects of class \code{Confounder} (see
+#'   [new_Confounder()]) to be added to the data. Default is a single confounder
+#'   with linear contributions to both exposure and outcome with coefficients
+#'   0.2 and 0.5, respectively.
 #' @param finalize Logical indicating whether the data set should be finalized,
 #'   i.e. errors added to contribute remaining variance and SNPs filtered based
 #'   on genome-wide significance (default is TRUE).
@@ -41,7 +42,6 @@
 #'     n_exposure_snps = 200,
 #'     causal_function = function(x) 0.05*exp(x))
 #'
-#' @export
 new_PolyMRDataSim <- function(sample_size = 1e5,
                               n_exposure_snps = 100,
                               exposure_heritability = 0.3,

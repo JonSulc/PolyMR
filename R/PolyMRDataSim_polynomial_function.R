@@ -15,7 +15,6 @@
 #'   some_values <- rnorm(100)
 #'   all(cubic_polynomial(some_values) == 0.5*some_values + 2*some_values^3)
 #'
-#' @export
 get_polynomial_function <- function(polynomial_coefficients = c(.1)){
   # Argument evaluation must be forced to avoid lazy evaluation potentially
   # occurring after the value has changed.

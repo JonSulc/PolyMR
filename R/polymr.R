@@ -38,7 +38,10 @@
 #'   new terms are no longer significant (p > \code{p_thr_add}). Default is 2,
 #'   as even and odd degree terms have different properties.
 #' @param reverse_t Threshold to use for reverse causality filtering (T
-#'   statistic), NULL for no filtering (default).
+#'   statistic), NULL for no filtering (default). A value of 0 represents a
+#'   simple filtering out of IVs explaining more variance in the outcome than
+#'   the exposure, whereas a value of 1.645 (\code{qnorm(.95)}) would remove
+#'   only those where that difference is significant (p < 0.05).
 #' @param p_thr_add The p-value threshold determining if newly added exposure
 #'   terms should be considered significant enough to further increase the
 #'   degree of the polynomial (by \code{power_step}, up to
@@ -99,13 +102,13 @@
 #'     }
 #'   }
 #' @examples
-#' \dontrun{
-#' simulated_data <- new_PolyMRDataSim()
+#' simulated_data <- PolyMR:::new_PolyMRDataSim()
 #' polymr(exposure  = simulated_data$exposure,
 #'        outcome   = simulated_data$outcome,
 #'        genotypes = simulated_data$genotypes,
+#'        reverse_t_thr = 0,
 #'        p_thr_drop = NULL)
-#' }
+#'
 #'
 #' @import data.table
 #'

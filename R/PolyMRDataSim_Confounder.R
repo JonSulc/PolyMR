@@ -28,7 +28,6 @@
 #'     exposure_confounding_function = function(x) 0.3*x,
 #'     outcome_confounding_function  = function(x) 0.1*x + 0.05*x^2
 #'   )
-#' @export
 new_Confounder <- function(
     sample_size,
     exposure_confounding_function = get_polynomial_function(0.2),
