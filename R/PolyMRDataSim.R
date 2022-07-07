@@ -42,13 +42,14 @@
 #'     n_exposure_snps = 200,
 #'     causal_function = function(x) 0.05*exp(x))
 #'
-new_PolyMRDataSim <- function(sample_size = 1e5,
-                              n_exposure_snps = 100,
-                              exposure_heritability = 0.3,
-                              causal_function = get_polynomial_function(c(.1, .05)),
-                              confounders_list = list(new_Confounder(sample_size)),
-                              finalize = TRUE,
-                              gws_thr = 5e-8){
+new_PolyMRDataSim <- function(
+    sample_size = 1e5,
+    n_exposure_snps = 100,
+    exposure_heritability = 0.3,
+    causal_function = get_polynomial_function(c(.1, .05)),
+    confounders_list = list(new_Confounder(sample_size)),
+    finalize = TRUE,
+    gws_thr = 5e-8) {
   stopifnot(is.numeric(sample_size))
   stopifnot(is.numeric(n_exposure_snps))
   stopifnot(is.double(exposure_heritability))
@@ -63,12 +64,12 @@ new_PolyMRDataSim <- function(sample_size = 1e5,
       causal_function = causal_function
     ),
     class = "PolyMRDataSim"
-  ) |>
-    generate_exposure_snp_mafs() |>
-    generate_exposure_snp_genotypes(sample_size) |>
-    remove_invariant_snps() |>
-    generate_exposure_coefficients() |>
-    generate_genetic_exposure()
+  )
+  polymr_data <- generate_exposure_snp_mafs(polymr_data)
+  polymr_data <- generate_exposure_snp_genotypes(polymr_data, sample_size)
+  polymr_data <- remove_invariant_snps(polymr_data)
+  polymr_data <- generate_exposure_coefficients(polymr_data)
+  polymr_data <- generate_genetic_exposure(polymr_data)
 
   for (confounder in confounders_list)
     polymr_data <- polymr_data + confounder
@@ -88,7 +89,7 @@ validate_PolyMRDataSim <- function(polymr_data){
       "Sample sizes for 'exposure', 'outcome', and 'genotypes' must match.",
       call = FALSE
     )
-  if (length(polymr_data$mafs) != length(polymr_data$exposure_coefficients) |
+  if (length(polymr_data$mafs) != length(polymr_data$exposure_coefficients) ||
       length(polymr_data$mafs) != ncol(polymr_data$genotypes))
     stop(
       "The size of 'mafs' and 'exposure_coefficients' must match the dimensions of the 'genotypes' matrix.",
@@ -117,7 +118,7 @@ validate_PolyMRDataSim <- function(polymr_data){
 }
 
 generate_exposure_snp_mafs <- function(polymr_data){
-  polymr_data$mafs <- rbeta( polymr_data$n_exposure_snps, 1, 3 )
+  polymr_data$mafs <- rbeta(polymr_data$n_exposure_snps, 1, 3)
 
   while (any(invalid_mafs <- polymr_data$mafs > .5))
     polymr_data$mafs[invalid_mafs] <- rbeta(sum(invalid_mafs), 1, 3)
@@ -146,12 +147,13 @@ generate_exposure_coefficients <- function(polymr_data){
   polymr_data$exposure_coefficients <- rnorm(
     length(polymr_data$mafs),
     mean = 0,
-    sd   = 2*(polymr_data$mafs * (1-polymr_data$mafs))^(3/8)
+    sd   = 2 * (polymr_data$mafs * (1-polymr_data$mafs))^(3 / 8)
   )
 
   polymr_data$exposure_coefficients <-
     polymr_data$exposure_coefficients *
-    sqrt(polymr_data$exposure_heritability / sum(polymr_data$exposure_coefficients^2))
+    sqrt(polymr_data$exposure_heritability /
+         sum(polymr_data$exposure_coefficients^2))
 
   polymr_data
 }
@@ -166,8 +168,10 @@ generate_genetic_exposure <- function(polymr_data){
 
 `+.PolyMRDataSim` <- function(polymr_data, confounder_obj){
   polymr_data$exposure <- polymr_data$exposure +
-    confounder_obj$exposure_confounding_function(confounder_obj$confounder_values)
-  polymr_data$confounders_list <- c(polymr_data$confounders_list, list(confounder_obj))
+    confounder_obj$exposure_confounding_function(
+      confounder_obj$confounder_values)
+  polymr_data$confounders_list <- c(polymr_data$confounders_list,
+                                    list(confounder_obj))
 
   polymr_data <- recalculate_outcome(polymr_data)
   validate_PolyMRDataSim(polymr_data)
@@ -185,10 +189,9 @@ recalculate_outcome <- function(polymr_data){
 finalize_data <- function(polymr_data,
                           filter_snps = TRUE,
                           gws_thr = 5e-8){
-  polymr_data <- polymr_data |>
-    add_error_to("exposure") |>
-    recalculate_outcome() |>
-    add_error_to("outcome")
+  polymr_data <- add_error_to(polymr_data, "exposure")
+  polymr_data <- recalculate_outcome(polymr_data)
+  polymr_data <- add_error_to(polymr_data, "outcome")
 
   if (filter_snps)
     return(filter_gws_snps(polymr_data, gws_thr))
@@ -198,9 +201,7 @@ finalize_data <- function(polymr_data,
 
 add_error_to <- function(polymr_data,
                          phenotype = "exposure"){
-  error_values <- rnorm(length(polymr_data[[phenotype]])) |>
-    scale() |>
-    c()
+  error_values <- scale(rnorm(length(polymr_data[[phenotype]])))[,]
   remaining_variance <- 1 - var(polymr_data[[phenotype]])
   if (remaining_variance < 0)
     stop(sprintf("The variance of %s exceeds 1 before adding noise.",
@@ -221,7 +222,9 @@ apply_confounders_to_outcome <- function(polymr_data){
 
 filter_gws_snps <- function(polymr_data,
                             gws_thr = 5e-8){
-  summary_stats <- summary(lm(polymr_data$exposure~polymr_data$genotypes))$coefficients
+  summary_stats <- summary(lm(
+      polymr_data$exposure~polymr_data$genotypes
+    ))$coefficients
   polymr_data[ , summary_stats[ -1, "Pr(>|t|)" ] < gws_thr]
 }
 

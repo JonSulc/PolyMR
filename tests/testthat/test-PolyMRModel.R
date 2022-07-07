@@ -60,9 +60,11 @@ test_that("PolyMRModel genotype-exposure association works", {
                    coef(lm(scale(my_data$exposure) ~ my_data$genotypes))[-1] |> unname())
 })
 test_that("PolyMRModel control function calculation works", {
-  expect_equal(c(polymr_model$genotypes %*% polymr_model$beta_exposure
-                 + polymr_model$control_function),
-               polymr_model$exposure)
+  # Testing cor() == 1 rather than equality because intercept is ignored
+  # in control function
+  expect_true(cor(polymr_model$genotypes %*% polymr_model$beta_exposure
+                 + polymr_model$control_function,
+               polymr_model$exposure) == 1)
 })
 
 eo_model <- new_EOModel(my_data)

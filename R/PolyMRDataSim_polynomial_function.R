@@ -21,7 +21,7 @@ get_polynomial_function <- function(polynomial_coefficients = c(.1)){
   force(polynomial_coefficients)
   function(values){
     powers <- outer(values,
-                    1:length(polynomial_coefficients),
+                    seq_along(polynomial_coefficients),
                     "^")
     c(powers %*% polynomial_coefficients)
   }

@@ -143,34 +143,36 @@ polymr <- function(exposure,
                                             bins = bins)
 
   if (return_observational_function)
-    results$observational <- new_EOModel(
+    observational <- new_EOModel(
         exposure = exposure,
         outcome = outcome,
         exposure_powers = starting_exposure_powers,
         max_exposure_power = max_exposure_power
-      ) |>
-      select_best_outcome_model(
+      )
+    observational <- select_best_outcome_model(
+        observational,
         power_step = power_step,
         p_thr_add = p_thr_add,
         p_thr_drop = p_thr_drop
-      ) |>
-      return_model()
+      )
+    results$observational <- return_model(observational)
 
-  results$polymr <-
+  polymr_model <-
     new_PolyMRModel(exposure = exposure,
                     outcome = outcome,
                     genotypes = genotypes,
                     exposure_powers = starting_exposure_powers,
                     reverse_t_thr = reverse_t_thr,
                     max_exposure_power = max_exposure_power,
-                    max_control_function_power = max_control_function_power) |>
-    select_best_outcome_model(
+                    max_control_function_power = max_control_function_power)
+  polymr_model <- select_best_outcome_model(
+        polymr_model,
         power_step = power_step,
         p_thr_add = p_thr_add,
         p_thr_drop = p_thr_drop,
         drop_higher_control_function_powers = drop_higher_control_function_powers
-      ) |>
-      return_model()
+      )
+  results$polymr <- return_model(polymr_model)
 
   results
 }

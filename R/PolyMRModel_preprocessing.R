@@ -5,10 +5,11 @@ preprocess_data.PolyMRModel <- function(polymr_model){
 }
 
 remove_duplicate_snps <- function(polymr_model){
-  poylmr_model <- calculate_beta_exposure(polymr_model)
+  polymr_model <- calculate_beta_exposure(polymr_model)
   if (any(is.na(polymr_model$beta_exposure))) {
     warning("Some IVs are not independent of one another, removing duplicates.")
-    polymr_model <- filter_snps(polymr_model, !is.na(beta_exposure))
+    polymr_model <-
+      filter_snps(polymr_model, !is.na(polymr_model$beta_exposure))
   }
   polymr_model
 }
@@ -19,7 +20,9 @@ filter_reverse_snps <- function(polymr_model){
 
   polymr_model <- calculate_beta_exposure(polymr_model)
   genotype_outcome_stats <-
-    summary(lm(polymr_model$outcome ~ polymr_model$genotypes))$coefficients[-1, 1:2]
+    summary(lm(
+        polymr_model$outcome ~ polymr_model$genotypes
+      ))$coefficients[-1, 1:2]
 
   to_keep <-
     (abs(polymr_model$beta_exposure) - abs(genotype_outcome_stats[, 1])) /

@@ -15,9 +15,7 @@ calculate_summary_statistics.EOModel <- function(eo_model){
 .get_outcome_model_coefficients <- function(model,
                                             terms_to_include,
                                             values_to_return){
-  all_coefficients <- model$outcome_model |>
-    summary() |>
-    coef()
+  all_coefficients <- summary(model$outcome_model)$coefficients
   all_coefficients[terms_to_include, values_to_return]
 }
 
@@ -72,10 +70,9 @@ get_linear_model.EOModel <- function(eo_model){
     outcome_predictors <- cbind(data.table::data.table(x1 = eo_model$exposure),
                                 outcome_predictors)
 
-  linear_model_terms <- colnames(outcome_predictors) |>
-    paste(collapse = " + ")
-  linear_model_formula <- paste(". ~", linear_model_terms) |>
-    as.formula()
+  linear_model_terms <- paste(colnames(outcome_predictors),
+                              collapse = " + ")
+  linear_model_formula <- as.formula(paste(". ~", linear_model_terms))
 
   update(eo_model$outcome_model, linear_model_formula, data = outcome_predictors)
 }

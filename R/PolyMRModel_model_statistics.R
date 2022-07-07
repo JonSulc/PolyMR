@@ -32,8 +32,7 @@ get_outcome_model_coefficients_exposure_pvalues.PolyMRModel <- function(polymr_m
 get_null_model <- function(polymr_model){
   control_function_terms <- paste0("ex", polymr_model$control_function_powers) |>
     paste(collapse = " + ")
-  null_model_formula <- paste(". ~", control_function_terms) |>
-    as.formula()
+  null_model_formula <- as.formula(paste(". ~", control_function_terms))
   update(polymr_model$outcome_model,
          null_model_formula,
          data = polymr_model$outcome_predictors)

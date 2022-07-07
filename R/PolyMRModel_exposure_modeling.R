@@ -8,9 +8,6 @@ calculate_control_function <- function(polymr_model,
   if (!is.null(polymr_model$control_function) && !recompute)
     return(polymr_model)
   polymr_model <- calculate_beta_exposure(polymr_model)
-  # polymr_model$control_function <-
-  #   c(polymr_model$exposure -
-  #       polymr_model$genotypes %*% polymr_model$beta_exposure)
   polymr_model
 }
 
@@ -25,10 +22,7 @@ calculate_beta_exposure <- function(polymr_model,
   full_exposure_model <- lm(polymr_model$exposure ~ polymr_model$genotypes)
   polymr_model$beta_exposure <- coef(full_exposure_model)[-1]
 
-  # Adding the intercept here is not mathematically necessary but matches the
-  # published method more closely, included here for clarity
-  polymr_model$control_function <-
-    residuals(full_exposure_model) + full_exposure_model$coefficients[1]
+  polymr_model$control_function <- residuals(full_exposure_model)
 
   if (!is.null(polymr_model$reverse_t_thr))
     polymr_model$se_exposure <- summary(full_exposure_model)$coefficients[-1, 2]

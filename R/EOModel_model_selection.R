@@ -18,8 +18,9 @@ drop_least_significant_term.EOModel <- function(eo_model, ...){
     return(update_outcome_model(eo_model, NULL))
   }
 
-  weakest_term <- get_outcome_model_coefficients_exposure_pvalues(eo_model) |>
-    which.max()
+  weakest_term <- which.max(
+    get_outcome_model_coefficients_exposure_pvalues(eo_model)
+    )
 
   update_outcome_model(
     eo_model,
@@ -37,7 +38,9 @@ are_terms_significant.EOModel <- function(
   if (is.null(p_thr))
     p_thr <- .05 / only_new
 
-  p_values <- get_outcome_model_coefficients_exposure_pvalues(eo_model) |>
-    tail(only_new)
+  p_values <- tail(
+    get_outcome_model_coefficients_exposure_pvalues(eo_model),
+    only_new
+    )
   p_values <= p_thr
 }

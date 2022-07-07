@@ -7,8 +7,8 @@ drop_least_significant_term.PolyMRModel <- function(
     return(update_outcome_model(polymr_model, NULL))
   }
 
-  weakest_term <- get_outcome_model_coefficients_exposure_pvalues(polymr_model) |>
-    which.max()
+  weakest_term <-
+    which.max(get_outcome_model_coefficients_exposure_pvalues(polymr_model))
 
   polymr_model$exposure_powers <- polymr_model$exposure_powers[-weakest_term]
 

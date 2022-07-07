@@ -14,7 +14,7 @@ new_EOModel <- function(eo_model = NULL,
   if (length(exposure) != length(outcome))
     stop("Exposure and outcome sample sizes must match.")
 
-  structure(
+  eo_model <- structure(
     list(
       exposure = exposure,
       outcome = outcome,
@@ -22,9 +22,9 @@ new_EOModel <- function(eo_model = NULL,
       max_exposure_power = 10
     ),
     class = "EOModel"
-  ) |>
-    preprocess_data() |>
-    model()
+  )
+  eo_model <- preprocess_data(eo_model)
+  model(eo_model)
 }
 
 
@@ -40,8 +40,8 @@ return_model <- function(eo_model, ...){
   UseMethod("return_model")
 }
 return_model.EOModel <- function(eo_model, ...){
-  calculate_vcov(eo_model) |>
-    cleanup(...)
+  eo_model <- calculate_vcov(eo_model)
+    cleanup(eo_model, ...)
 }
 
 cleanup <- function(eo_model,

@@ -21,30 +21,30 @@ new_PolyMRModel <- function(
   if (length(exposure) != length(outcome) || length(exposure) != nrow(genotypes))
     stop("Exposure, outcome and genotype sample sizes must match.")
 
-  structure(
-    list(
-      exposure = exposure,
-      outcome = outcome,
-      genotypes = genotypes,
-      beta_exposure = beta_exposure,
-      se_exposure = se_exposure,
-      control_function = control_function,
-      exposure_powers = exposure_powers,
-      control_function_powers = control_function_powers,
-      reverse_t_thr = reverse_t_thr,
-      max_exposure_power = max_exposure_power,
-      max_control_function_power = max_control_function_power
-    ),
-    class = c("PolyMRModel", "EOModel")
-  ) |>
-    preprocess_data() |>
-    model()
+  polymr_model <- structure(
+      list(
+        exposure = exposure,
+        outcome = outcome,
+        genotypes = genotypes,
+        beta_exposure = beta_exposure,
+        se_exposure = se_exposure,
+        control_function = control_function,
+        exposure_powers = exposure_powers,
+        control_function_powers = control_function_powers,
+        reverse_t_thr = reverse_t_thr,
+        max_exposure_power = max_exposure_power,
+        max_control_function_power = max_control_function_power
+      ),
+      class = c("PolyMRModel", "EOModel")
+    )
+  polymr_model <- preprocess_data(polymr_model)
+  model(polymr_model)
 }
 
 
 model.PolyMRModel <- function(polymr_model){
-  model_exposure(polymr_model) |>
-    model_outcome()
+  polymr_model <- model_exposure(polymr_model)
+  model_outcome(polymr_model)
 }
 
 

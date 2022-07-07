@@ -35,9 +35,7 @@ new_Confounder <- function(
   ){
 
   structure(
-    list(confounder_values = rnorm( sample_size ) |>
-           scale() |>
-           c(),
+    list(confounder_values = scale(rnorm(sample_size))[,],
          exposure_confounding_function = exposure_confounding_function,
          outcome_confounding_function  = outcome_confounding_function),
     class = "Confounder"

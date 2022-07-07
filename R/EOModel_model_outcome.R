@@ -2,8 +2,7 @@ model_outcome <- function(eo_model){
   eo_model <- create_outcome_predictors_table(eo_model)
   eo_model$outcome_model <-
     lm(eo_model$outcome ~ ., data = eo_model$outcome_predictors)
-  eo_model <- eo_model |>
-    calculate_summary_statistics()
+  eo_model <- calculate_summary_statistics(eo_model)
   eo_model
 }
 
@@ -16,8 +15,8 @@ create_outcome_predictors_table.EOModel <- function(eo_model){
     exposure_poly <-
       outer(eo_model$exposure,
             eo_model$exposure_powers,
-            '^') |>
-      data.table::as.data.table()
+            "^")
+    exposure_poly <- data.table::as.data.table(exposure_poly)
     colnames(exposure_poly) <- paste0("x", eo_model$exposure_powers)
   } else
     exposure_poly <- NULL
@@ -26,8 +25,8 @@ create_outcome_predictors_table.EOModel <- function(eo_model){
     control_function_poly <-
       outer(eo_model$control_function,
             eo_model$control_function_powers,
-            '^') |>
-      data.table::as.data.table()
+            "^")
+    control_function_poly <- data.table::as.data.table(control_function_poly)
     colnames(control_function_poly) <- paste0("ex", eo_model$control_function_powers)
   } else
     control_function_poly <- NULL
