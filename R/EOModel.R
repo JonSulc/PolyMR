@@ -44,17 +44,16 @@ return_model.EOModel <- function(eo_model, ...){
     cleanup(...)
 }
 
-cleanup <- function(eo_model, ...){
-  UseMethod("cleanup")
-}
-cleanup.EOModel <- function(eo_model,
-                            to_return = c("outcome_model",
-                                          "vcov",
-                                          "pval_null_model",
-                                          "pval_linear_model",
-                                          "r_squared"),
+cleanup <- function(eo_model,
+                    to_return = c("outcome_model",
+                                  "vcov",
+                                  "pval_null_model",
+                                  "pval_linear_model",
+                                  "r_squared"),
                             ...){
-  eo_model[to_return]
+  values_to_remove <- setdiff(names(eo_model), to_return)
+  eo_model[values_to_remove] <- NULL
+  eo_model
 }
 
 

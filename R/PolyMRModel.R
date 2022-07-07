@@ -48,16 +48,6 @@ model.PolyMRModel <- function(polymr_model){
 }
 
 
-cleanup.PolyMRModel <- function(polymr_model,
-                                to_return = c("outcome_model",
-                                              "vcov",
-                                              "pval_null_model",
-                                              "pval_linear_model",
-                                              "r_squared")){
-  NextMethod()
-}
-
-
 
 
 

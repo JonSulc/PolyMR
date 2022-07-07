@@ -60,7 +60,8 @@ test_that("PolyMRModel genotype-exposure association works", {
                    coef(lm(scale(my_data$exposure) ~ my_data$genotypes))[-1] |> unname())
 })
 test_that("PolyMRModel control function calculation works", {
-  expect_equal(c(polymr_model$genotypes %*% polymr_model$beta_exposure + polymr_model$control_function),
+  expect_equal(c(polymr_model$genotypes %*% polymr_model$beta_exposure
+                 + polymr_model$control_function),
                polymr_model$exposure)
 })
 
@@ -223,6 +224,35 @@ test_that("Model summary statistics are properly updated", {
 
   expect_true(update_outcome_model(polymr_model, 1:2)$pval_linear_model < 1)
   expect_true(update_outcome_model(eo_model, 1:2)$pval_linear_model < 1)
+})
+
+test_that("Calculating the variance-covariance (vcov) matrix works", {
+  expect_equal(calculate_vcov(eo_model)$vcov |> diag(),
+               summary(eo_model$outcome_model)$coef[ , "Std. Error"]^2)
+  expect_equal(calculate_vcov(polymr_model)$vcov |> diag(),
+               summary(polymr_model$outcome_model)$coef[ , "Std. Error"]^2)
+})
+
+test_that("Cleanup works", {
+  clean_eo_model <- cleanup(eo_model)
+  expect_true(setequal(
+    names(clean_eo_model),
+    c("outcome_model",
+      "pval_null_model",
+      "pval_linear_model",
+      "r_squared")
+  ))
+  expect_s3_class(clean_eo_model, c("EOModel"))
+
+  clean_polymr_model <- cleanup(polymr_model)
+  expect_true(setequal(
+    names(clean_polymr_model),
+    c("outcome_model",
+      "pval_null_model",
+      "pval_linear_model",
+      "r_squared")
+  ))
+  expect_s3_class(clean_polymr_model, c("PolyMRModel", "EOModel"))
 })
 
 
