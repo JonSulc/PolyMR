@@ -1,37 +1,45 @@
-model_exposure <- function(polymr_model){
-  calculate_control_function(polymr_model)
+model_exposure <- function(polymr_model) {
+  polymr_model <- create_exposure_model(polymr_model)
+  
+  if (!is.null(polymr_model$reverse_t_thr)) {
+    polymr_model <- filter_reverse_snps(polymr_model)
+  }
+  
+  polymr_model$control_function <- residuals(polymr_model$exposure_model)
+
+  polymr_model
+}
+
+
+create_exposure_model <- function(polymr_model) {
+  polymr_model$exposure_model <-
+    lm(polymr_model$exposure ~ polymr_model$genotypes)
+  polymr_model
 }
 
 
 calculate_control_function <- function(polymr_model,
-                                       recompute = FALSE){
-  if (!is.null(polymr_model$control_function) && !recompute)
-    return(polymr_model)
-  polymr_model <- calculate_beta_exposure(polymr_model)
-  # polymr_model$control_function <-
-  #   c(polymr_model$exposure -
-  #       polymr_model$genotypes %*% polymr_model$beta_exposure)
+                                       recompute = FALSE) {
+  polymr_model$control_function <- residuals(polymr_model$exposure_model)
+
   polymr_model
 }
 
 
-calculate_beta_exposure <- function(polymr_model,
-                                    recompute = FALSE){
-  if (!is.null(polymr_model$beta_exposure) &&
-      !recompute &&
-      (is.null(polymr_model$reverse_t_thr) || !is.null(polymr_model$se_exposure)))
+filter_reverse_snps <- function(polymr_model) {
+  genotype_outcome_stats <-
+    summary(lm(polymr_model$outcome ~ polymr_model$genotypes))$coefficients[-1, 1:2]
+  genotype_exposure_stats <-
+    summary(polymr_model$exposure_model)$coefficients[-1, 1:2]
+
+  to_keep <-
+    (abs(genotype_exposure_stats[, 1]) - abs(genotype_outcome_stats[, 1])) /
+    sqrt(genotype_exposure_stats[, 2]^2 + genotype_outcome_stats[, 2]^2) >
+    polymr_model$reverse_t_thr
+  
+  if (all(to_keep))
     return(polymr_model)
 
-  full_exposure_model <- lm(polymr_model$exposure ~ polymr_model$genotypes)
-  polymr_model$beta_exposure <- coef(full_exposure_model)[-1]
-
-  # Adding the intercept here is not mathematically necessary but matches the
-  # published method more closely, included here for clarity
-  polymr_model$control_function <-
-    residuals(full_exposure_model) + full_exposure_model$coefficients[1]
-
-  if (!is.null(polymr_model$reverse_t_thr))
-    polymr_model$se_exposure <- summary(full_exposure_model)$coefficients[-1, 2]
-
-  polymr_model
+  polymr_model$genotypes <- polymr_model$genotypes[, to_keep]
+  create_exposure_model(polymr_model)
 }

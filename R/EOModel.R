@@ -53,10 +53,26 @@ cleanup <- function(eo_model,
                             ...){
   values_to_remove <- setdiff(names(eo_model), to_return)
   eo_model[values_to_remove] <- NULL
+
+  eo_model$outcome_model <- cleanup_model(eo_model$outcome_model)
+
   eo_model
 }
 
 
+# The lm() function stores many values which are unnecessary for
+# the description of the model, resulting in greater memory usage.
+# This function aims to reduce the memory footprint, retaining only
+# those that are necessary for summary() and predict().
+cleanup_model <- function(lm_model,
+                          to_remove = c(
+                            "y",
+                            "model"
+                          )) {
+  lm_model[to_remove] <- NULL
 
+  attr(lm_model$terms,   ".Environment") <- NULL
+  attr(lm_model$formula, ".Environment") <- NULL
 
-
+  lm_model
+}

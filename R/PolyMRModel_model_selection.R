@@ -1,7 +1,7 @@
 drop_least_significant_term.PolyMRModel <- function(
     polymr_model,
     drop_higher_control_function_powers = TRUE
-){
+  ) {
   if (length(polymr_model$exposure_powers) == 1){
     warning("No significant terms left, returning null model.")
     return(update_outcome_model(polymr_model, NULL))

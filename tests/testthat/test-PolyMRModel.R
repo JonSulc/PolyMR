@@ -56,12 +56,16 @@ test_that("EOModel instanciation works", {
 
 polymr_model <- new_PolyMRModel(my_data)
 test_that("PolyMRModel genotype-exposure association works", {
-  expect_identical(polymr_model$beta_exposure |> unname(),
-                   coef(lm(scale(my_data$exposure) ~ my_data$genotypes))[-1] |> unname())
+  expect_equal(polymr_model$exposure_model$coefficients |>
+                 unname(),
+               lm(scale(my_data$exposure) ~ my_data$genotypes)$coefficients |>
+                 unname())
 })
+
 test_that("PolyMRModel control function calculation works", {
-  expect_equal(c(polymr_model$genotypes %*% polymr_model$beta_exposure
-                 + polymr_model$control_function),
+  expect_equal(c(polymr_model$genotypes %*% polymr_model$exposure_model$coef[-1]
+                 + polymr_model$control_function
+                 + polymr_model$exposure_model$coef[1]),
                polymr_model$exposure)
 })
 
@@ -243,6 +247,7 @@ test_that("Cleanup works", {
       "r_squared")
   ))
   expect_s3_class(clean_eo_model, c("EOModel"))
+  expect_error(summary(clean_eo_model$outcome_model), NA)
 
   clean_polymr_model <- cleanup(polymr_model)
   expect_true(setequal(
@@ -253,6 +258,7 @@ test_that("Cleanup works", {
       "r_squared")
   ))
   expect_s3_class(clean_polymr_model, c("PolyMRModel", "EOModel"))
+  expect_error(summary(clean_polymr_model$outcome_model), NA)
 })
 
 

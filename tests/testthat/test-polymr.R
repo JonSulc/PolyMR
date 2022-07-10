@@ -88,7 +88,7 @@ test_that("polymr() returns the appropriate warnings", {
                         p_thr_add = .025,
                         p_thr_drop = 1e-3)
   expect_equal(full_polymr$polymr,
-               select_best_outcome_model(polymr_model,
+               select_best_outcome_model(polymr_model |> update_outcome_model(1:10),
                                          p_thr_add = .025,
                                          p_thr_drop = 1e-3) |>
                  return_model())

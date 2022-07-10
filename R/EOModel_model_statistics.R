@@ -95,7 +95,7 @@ get_pval_vs_null_model <- function(model, ...){
 
 get_pval_vs_null_model.EOModel <- function(eo_model){
   model_fstatistics <- summary(eo_model$outcome_model)$fstatistic
-  pf(q = model_fstatistics[['value']],
+  pf(q   = model_fstatistics[['value']],
      df1 = model_fstatistics[['numdf']],
      df2 = model_fstatistics[['dendf']],
      lower.tail = FALSE)
