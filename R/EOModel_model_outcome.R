@@ -19,7 +19,7 @@ create_outcome_predictors_table.EOModel <- function(eo_model){
             "^") |>
       data.table::as.data.table()
     colnames(eo_model$outcome_predictors) <-
-      paste0("x", eo_model$exposure_powers)
+      paste0("exposure", eo_model$exposure_powers)
   } else
     eo_model$outcome_predictors <- NULL
   eo_model

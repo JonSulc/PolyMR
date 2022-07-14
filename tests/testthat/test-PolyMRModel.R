@@ -72,31 +72,31 @@ test_that("PolyMRModel control function calculation works", {
 eo_model <- new_EOModel(my_data)
 test_that("Regression table works", {
   expect_identical(create_outcome_predictors_table(polymr_model)$outcome_predictors,
-                   data.table::data.table(x1 = polymr_model$exposure,
-                                          ex1 = residuals(polymr_model$exposure_model)))
+                   data.table::data.table(exposure1 = polymr_model$exposure,
+                                          cf1 = residuals(polymr_model$exposure_model)))
   expect_identical(create_outcome_predictors_table(eo_model)$outcome_predictors,
-                   data.table::data.table(x1 = eo_model$exposure))
+                   data.table::data.table(exposure1 = eo_model$exposure))
 
   expect_identical(update_outcome_model(polymr_model, 1:2)$outcome_predictors,
-                   data.table::data.table(x1 = polymr_model$exposure,
-                                          x2 = polymr_model$exposure^2,
-                                          ex1 = residuals(polymr_model$exposure_model),
-                                          ex2 = residuals(polymr_model$exposure_model)^2))
+                   data.table::data.table(exposure1 = polymr_model$exposure,
+                                          exposure2 = polymr_model$exposure^2,
+                                          cf1 = residuals(polymr_model$exposure_model),
+                                          cf2 = residuals(polymr_model$exposure_model)^2))
   expect_identical(update_outcome_model(eo_model, 1:2)$outcome_predictors,
-                   data.table::data.table(x1 = eo_model$exposure,
-                                          x2 = eo_model$exposure^2))
+                   data.table::data.table(exposure1 = eo_model$exposure,
+                                          exposure2 = eo_model$exposure^2))
 
   expect_identical(update_outcome_model(polymr_model, 2)$outcome_predictors,
-                   data.table::data.table(x2 = polymr_model$exposure^2,
-                                          ex1 = residuals(polymr_model$exposure_model),
-                                          ex2 = residuals(polymr_model$exposure_model)^2))
+                   data.table::data.table(exposure2 = polymr_model$exposure^2,
+                                          cf1 = residuals(polymr_model$exposure_model),
+                                          cf2 = residuals(polymr_model$exposure_model)^2))
   expect_identical(update_outcome_model(eo_model, 2)$outcome_predictors,
-                   data.table::data.table(x2 = eo_model$exposure^2))
+                   data.table::data.table(exposure2 = eo_model$exposure^2))
 
   expect_identical(update_outcome_model(polymr_model, 2, 3:4)$outcome_predictors,
-                   data.table::data.table(x2 = polymr_model$exposure^2,
-                                          ex3 = residuals(polymr_model$exposure_model)^3,
-                                          ex4 = residuals(polymr_model$exposure_model)^4))
+                   data.table::data.table(exposure2 = polymr_model$exposure^2,
+                                          cf3 = residuals(polymr_model$exposure_model)^3,
+                                          cf4 = residuals(polymr_model$exposure_model)^4))
 })
 
 test_that("Modeling the outcome works", {
@@ -117,14 +117,14 @@ test_that("Modeling the outcome works", {
   expect_identical(
     coef(update_outcome_model(polymr_model, exposure_powers = 2, control_function_powers = 1:2)$outcome_model),
     coef(lm(polymr_model$outcome ~ .,
-            data = data.table::data.table(x2 = polymr_model$exposure^2,
-                                          ex1 = residuals(polymr_model$exposure_model),
-                                          ex2 = residuals(polymr_model$exposure_model)^2)))
+            data = data.table::data.table(exposure2 = polymr_model$exposure^2,
+                                          cf1 = residuals(polymr_model$exposure_model),
+                                          cf2 = residuals(polymr_model$exposure_model)^2)))
   )
   expect_identical(
     coef(update_outcome_model(eo_model, exposure_powers = 2)$outcome_model),
     coef(lm(eo_model$outcome ~ .,
-            data = data.table::data.table(x2 = eo_model$exposure^2)))
+            data = data.table::data.table(exposure2 = eo_model$exposure^2)))
   )
 })
 
@@ -145,21 +145,21 @@ test_that("Auto-updating control function powers works", {
 test_that("Creating the null model works", {
   expect_identical(
     coef(get_null_model(polymr_model)),
-    coef(lm(polymr_model$outcome ~ ex1, data = polymr_model$outcome_predictors))
+    coef(lm(polymr_model$outcome ~ cf1, data = polymr_model$outcome_predictors))
   )
   expect_identical(
     update_outcome_model(polymr_model, exposure_powers = 1:3, control_function_powers = 4) |>
       get_null_model() |>
       coef(),
-    coef(lm(polymr_model$outcome ~ ex4,
-            data = data.table::data.table(ex4 = polymr_model$outcome_predictors$ex1^4)))
+    coef(lm(polymr_model$outcome ~ cf4,
+            data = data.table::data.table(cf4 = polymr_model$outcome_predictors$cf1^4)))
   )
 })
 
 test_that("Creating the linear model works", {
   expect_identical(
     coef(get_linear_model(polymr_model)),
-    coef(lm(polymr_model$outcome ~ x1 + ex1, data = polymr_model$outcome_predictors))
+    coef(lm(polymr_model$outcome ~ exposure1 + cf1, data = polymr_model$outcome_predictors))
   )
   expect_identical(
     coef(get_linear_model(eo_model)),
@@ -170,10 +170,10 @@ test_that("Creating the linear model works", {
     update_outcome_model(polymr_model, exposure_powers = c(1,3), control_function_powers = 4) |>
       get_linear_model() |>
       coef(),
-    coef(lm(polymr_model$outcome ~ x1 + ex4,
+    coef(lm(polymr_model$outcome ~ exposure1 + cf4,
             data = data.table::data.table(
-              x1 = polymr_model$outcome_predictors$x1,
-              ex4 = polymr_model$outcome_predictors$ex1^4
+              exposure1 = polymr_model$outcome_predictors$exposure1,
+              cf4 = polymr_model$outcome_predictors$cf1^4
             )))
   )
   expect_identical(

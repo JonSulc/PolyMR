@@ -10,7 +10,7 @@ get_outcome_model_coefficients.PolyMRModel <- function(
     include_exposure = include_exposure,
     include_intercept = include_intercept,
     terms_to_include = if (include_control_function)
-      paste0("ex", polymr_model$control_function_powers),
+      paste0("cf", polymr_model$control_function_powers),
     values_to_return = values_to_return
   )
 }
@@ -30,7 +30,7 @@ get_outcome_model_coefficients_exposure_pvalues.PolyMRModel <- function(polymr_m
 
 
 get_null_model <- function(polymr_model){
-  control_function_terms <- paste0("ex", polymr_model$control_function_powers) |>
+  control_function_terms <- paste0("cf", polymr_model$control_function_powers) |>
     paste(collapse = " + ")
   null_model_formula <- paste(". ~", control_function_terms) |>
     as.formula()

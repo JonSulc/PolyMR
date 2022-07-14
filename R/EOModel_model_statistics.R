@@ -33,7 +33,7 @@ get_outcome_model_coefficients.EOModel <- function(
     values_to_return = c("Estimate", "Pr(>|t|)")
 ){
   if (include_exposure && length(eo_model$exposure_powers) > 0)
-    terms_to_include <- c(paste0("x", eo_model$exposure_powers),
+    terms_to_include <- c(paste0("exposure", eo_model$exposure_powers),
                           terms_to_include)
   if (include_intercept)
     terms_to_include <- c("(Intercept)", terms_to_include)
@@ -64,12 +64,12 @@ get_linear_model <- function(eo_model){
 
 get_linear_model.EOModel <- function(eo_model){
   terms_to_keep <- colnames(eo_model$outcome_predictors)[
-    grepl("^(x1$|[^x])", colnames(eo_model$outcome_predictors))
+    grepl("^(exposure1$|[^e])", colnames(eo_model$outcome_predictors))
   ]
   outcome_predictors <- eo_model$outcome_predictors[ , ..terms_to_keep]
 
-  if (!("x1" %in% colnames(eo_model$outcome_predictors)))
-    outcome_predictors <- cbind(data.table::data.table(x1 = eo_model$exposure),
+  if (!("exposure1" %in% colnames(eo_model$outcome_predictors)))
+    outcome_predictors <- cbind(data.table::data.table(exposure1 = eo_model$exposure),
                                 outcome_predictors)
 
   linear_model_terms <- colnames(outcome_predictors) |>

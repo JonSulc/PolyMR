@@ -45,7 +45,7 @@ create_outcome_predictors_table.PolyMRModel <- function(polymr_model) {
           "^") |>
     data.table::as.data.table()
   colnames(control_function_poly) <-
-    paste0("ex", polymr_model$control_function_powers)
+    paste0("cf", polymr_model$control_function_powers)
 
   polymr_model$outcome_predictors <- cbind(polymr_model$outcome_predictors,
                                            control_function_poly)
