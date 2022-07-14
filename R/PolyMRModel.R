@@ -5,7 +5,7 @@ new_PolyMRModel <- function(
     genotypes = exposure_outcome_model_data$genotypes,
     beta_exposure = exposure_outcome_model_data$beta_exposure,
     se_exposure = exposure_outcome_model_data$se_exposure,
-    control_function = exposure_outcome_model_data$control_function,
+    control_function = residuals(exposure_outcome_model_data$exposure_model),
     exposure_powers = 1,
     control_function_powers = 1:min(max(exposure_powers),
                                     max_control_function_power),

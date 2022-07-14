@@ -1,11 +1,8 @@
 model_exposure <- function(polymr_model) {
   polymr_model <- create_exposure_model(polymr_model)
-  
-  if (!is.null(polymr_model$reverse_t_thr)) {
+
+  if (!is.null(polymr_model$reverse_t_thr))
     polymr_model <- filter_reverse_snps(polymr_model)
-  }
-  
-  polymr_model$control_function <- residuals(polymr_model$exposure_model)
 
   polymr_model
 }
@@ -14,14 +11,6 @@ model_exposure <- function(polymr_model) {
 create_exposure_model <- function(polymr_model) {
   polymr_model$exposure_model <-
     lm(polymr_model$exposure ~ polymr_model$genotypes)
-  polymr_model
-}
-
-
-calculate_control_function <- function(polymr_model,
-                                       recompute = FALSE) {
-  polymr_model$control_function <- residuals(polymr_model$exposure_model)
-
   polymr_model
 }
 

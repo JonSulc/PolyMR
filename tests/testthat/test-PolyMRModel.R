@@ -64,7 +64,7 @@ test_that("PolyMRModel genotype-exposure association works", {
 
 test_that("PolyMRModel control function calculation works", {
   expect_equal(c(polymr_model$genotypes %*% polymr_model$exposure_model$coef[-1]
-                 + polymr_model$control_function
+                 + residuals(polymr_model$exposure_model)
                  + polymr_model$exposure_model$coef[1]),
                polymr_model$exposure)
 })
@@ -73,30 +73,30 @@ eo_model <- new_EOModel(my_data)
 test_that("Regression table works", {
   expect_identical(create_outcome_predictors_table(polymr_model)$outcome_predictors,
                    data.table::data.table(x1 = polymr_model$exposure,
-                                          ex1 = polymr_model$control_function))
+                                          ex1 = residuals(polymr_model$exposure_model)))
   expect_identical(create_outcome_predictors_table(eo_model)$outcome_predictors,
                    data.table::data.table(x1 = eo_model$exposure))
 
   expect_identical(update_outcome_model(polymr_model, 1:2)$outcome_predictors,
                    data.table::data.table(x1 = polymr_model$exposure,
                                           x2 = polymr_model$exposure^2,
-                                          ex1 = polymr_model$control_function,
-                                          ex2 = polymr_model$control_function^2))
+                                          ex1 = residuals(polymr_model$exposure_model),
+                                          ex2 = residuals(polymr_model$exposure_model)^2))
   expect_identical(update_outcome_model(eo_model, 1:2)$outcome_predictors,
                    data.table::data.table(x1 = eo_model$exposure,
                                           x2 = eo_model$exposure^2))
 
   expect_identical(update_outcome_model(polymr_model, 2)$outcome_predictors,
                    data.table::data.table(x2 = polymr_model$exposure^2,
-                                          ex1 = polymr_model$control_function,
-                                          ex2 = polymr_model$control_function^2))
+                                          ex1 = residuals(polymr_model$exposure_model),
+                                          ex2 = residuals(polymr_model$exposure_model)^2))
   expect_identical(update_outcome_model(eo_model, 2)$outcome_predictors,
                    data.table::data.table(x2 = eo_model$exposure^2))
 
   expect_identical(update_outcome_model(polymr_model, 2, 3:4)$outcome_predictors,
                    data.table::data.table(x2 = polymr_model$exposure^2,
-                                          ex3 = polymr_model$control_function^3,
-                                          ex4 = polymr_model$control_function^4))
+                                          ex3 = residuals(polymr_model$exposure_model)^3,
+                                          ex4 = residuals(polymr_model$exposure_model)^4))
 })
 
 test_that("Modeling the outcome works", {
@@ -118,8 +118,8 @@ test_that("Modeling the outcome works", {
     coef(update_outcome_model(polymr_model, exposure_powers = 2, control_function_powers = 1:2)$outcome_model),
     coef(lm(polymr_model$outcome ~ .,
             data = data.table::data.table(x2 = polymr_model$exposure^2,
-                                          ex1 = polymr_model$control_function,
-                                          ex2 = polymr_model$control_function^2)))
+                                          ex1 = residuals(polymr_model$exposure_model),
+                                          ex2 = residuals(polymr_model$exposure_model)^2)))
   )
   expect_identical(
     coef(update_outcome_model(eo_model, exposure_powers = 2)$outcome_model),

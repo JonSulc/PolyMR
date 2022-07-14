@@ -13,27 +13,15 @@ create_outcome_predictors_table <- function(x, ...){
 }
 create_outcome_predictors_table.EOModel <- function(eo_model){
   if (length(eo_model$exposure_powers) > 0){
-    exposure_poly <-
+    eo_model$outcome_predictors <-
       outer(eo_model$exposure,
             eo_model$exposure_powers,
-            '^') |>
+            "^") |>
       data.table::as.data.table()
-    colnames(exposure_poly) <- paste0("x", eo_model$exposure_powers)
+    colnames(eo_model$outcome_predictors) <-
+      paste0("x", eo_model$exposure_powers)
   } else
-    exposure_poly <- NULL
-
-  if (length(eo_model$control_function_powers) > 0){
-    control_function_poly <-
-      outer(eo_model$control_function,
-            eo_model$control_function_powers,
-            '^') |>
-      data.table::as.data.table()
-    colnames(control_function_poly) <- paste0("ex", eo_model$control_function_powers)
-  } else
-    control_function_poly <- NULL
-
-  eo_model$outcome_predictors <- cbind(exposure_poly,
-                                       control_function_poly)
+    eo_model$outcome_predictors <- NULL
   eo_model
 }
 
