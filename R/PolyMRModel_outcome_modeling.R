@@ -38,16 +38,10 @@ update_control_function_powers <- function(polymr_model,
 
 create_outcome_predictors_table.PolyMRModel <- function(polymr_model) {
   polymr_model <- NextMethod()
-
-  control_function_poly <-
-    outer(residuals(polymr_model$exposure_model),
-          polymr_model$control_function_powers,
-          "^") |>
-    data.table::as.data.table()
-  colnames(control_function_poly) <-
-    paste0("cf", polymr_model$control_function_powers)
-
-  polymr_model$outcome_predictors <- cbind(polymr_model$outcome_predictors,
-                                           control_function_poly)
+  polymr_model$outcome_predictors <-
+    cbind(polymr_model$outcome_predictors,
+          create_power_table(residuals(polymr_model$exposure_model),
+                             polymr_model$control_function_powers,
+                             "cf"))
   polymr_model
 }
