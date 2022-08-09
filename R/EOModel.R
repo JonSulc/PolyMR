@@ -50,13 +50,23 @@ cleanup <- function(eo_model,
                                   "pval_null_model",
                                   "pval_linear_model",
                                   "r_squared"),
-                            ...){
+                            ...) {
   values_to_remove <- setdiff(names(eo_model), to_return)
   eo_model[values_to_remove] <- NULL
 
   eo_model$outcome_model <- cleanup_model(eo_model$outcome_model)
 
   eo_model
+}
+
+#' @exportS3Method
+coef.EOModel <- function(eo_model) {
+  coef(eo_model$outcome_model)
+}
+
+#' @exportS3Method
+summary.EOModel <- function(eo_model) {
+  summary(eo_model$outcome_model)
 }
 
 
