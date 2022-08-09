@@ -135,7 +135,7 @@ polymr <- function(exposure,
   results <- list()
 
   if (return_phenotypes_summary)
-    results$phentoypes_summary <- get_phenotypes_summary(exposure, outcome)
+    results$phenotypes_summary <- get_phenotypes_summary(exposure, outcome)
 
   if (return_binned_observations)
     results$binned_observations <- get_bins(exposure = exposure,
