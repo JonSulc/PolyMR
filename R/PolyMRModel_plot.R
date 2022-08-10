@@ -13,17 +13,3 @@ predict.PolyMRModel <- function(polymr_model, exposure) {
     cbind(outcome_predictors)
   predict(polymr_model$outcome_model, outcome_predictors)
 }
-
-#' @exportS3Method
-plot.PolyMRModel <- function(polymr_model,
-                             exposure,
-                             show_confidence_hull) {
-  to_plot <- data.frame(x        = exposure,
-                        method   = "PolyMR",
-                        estimate = predict(polymr_model, exposure),
-                        lower    = NA,
-                        upper    = NA)
-  if (show_confidence_hull)
-    to_plot[, c("lower", "upper")] <-
-      get_confidence_hull(polymr_model, exposure)
-}
