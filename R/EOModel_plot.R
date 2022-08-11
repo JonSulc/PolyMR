@@ -7,14 +7,29 @@ get_exposure_powers <- function(eo_model) {
 
 #' @exportS3Method
 plot.EOModel <- function(eo_model,
+                         xlim = NULL,
+                         n_points = 1000,
+                         add = FALSE,
                          ...,
                          show_confidence_ribbons = TRUE) {
-  p <- base_plot(eo_model, ...) +
-    plot_curve(eo_model, ...)
+  if (is.null(xlim)) {
+    warning("It is highly recommended to specify the exposure range (xlim).")
+    xlim <- qnorm(c(1, n_points) / (n_points + 1))
+  }
 
-  if (show_confidence_ribbons)
-    p <- p + plot_confidence_ribbon(eo_model, ...)
-  p
+  exposure_values <- seq(xlim[1],
+                         xlim[2],
+                         length.out = n_points)
+
+  eo_model_plot <- plot_curve(eo_model,
+                              exposure_values,
+                              ...,
+                              show_confidence_ribbons = show_confidence_ribbons)
+  if (add)
+    return(eo_model_plot)
+
+  base_plot() +
+    eo_model_plot
 }
 
 #' @exportS3Method
@@ -26,33 +41,35 @@ predict.EOModel <- function(eo_model, exposure) {
   predict(eo_model$outcome_model, outcome_predictors)
 }
 
-base_plot <- function(eo_model,
-                      exposure,
-                      method_name) {
-  to_plot <- data.frame(x = double(),
-                        estimate = double(),
-                        method = character())
-  ggplot2::ggplot(to_plot,
-                  ggplot2::aes(x = x,
-                               y = estimate,
+base_plot <- function() {
+  data.frame(exposure = double(),
+             outcome = double(),
+             method = character()) |>
+  ggplot2::ggplot(ggplot2::aes(x = exposure,
+                               y = outcome,
                                group = method,
                                color = method))
 }
 
 plot_curve <- function(eo_model,
-                       exposure,
-                       method_name) {
+                       exposure_values,
+                       method_name = "",
+                       show_confidence_ribbons = TRUE,
+                       ...) {
   if (is.null(coef(eo_model))) {
-    to_plot <- data.frame(x = range(exposure),
-                          method = method_name,
-                          estimate = c(0, 0))
+    to_plot <- data.frame(exposure = range(exposure_values),
+                          outcome = c(0,0),
+                          method = method_name)
   } else {
-    to_plot <- data.frame(x = exposure,
-                          method = method_name,
-                          estimate = predict(eo_model, exposure))
+    to_plot <- data.frame(exposure = exposure_values,
+                          outcome = predict(eo_model, exposure_values),
+                          method = method_name)
   }
-  ggplot2::geom_line(data = to_plot,
-                     ggplot2::aes(linetype = method))
+  p <- ggplot2::geom_line(data = to_plot,
+                          ggplot2::aes(linetype = method))
+  if (!show_confidence_ribbons)
+    return(p)
+  list(p, plot_confidence_ribbon(eo_model, exposure_values, method_name))
 }
 
 get_confidence_boundaries <- function(
@@ -85,15 +102,15 @@ get_confidence_boundaries <- function(
 
 plot_confidence_ribbon <- function(eo_model,
                                    exposure_values,
-                                   method_name = "Observational",
+                                   method_name = "",
                                    geom_ribbon_arguments = list(alpha = .1),
                                    ...) {
   ribbon_boundaries <- get_confidence_boundaries(eo_model,
                                                  exposure_values,
                                                  ...)
+  ribbon_boundaries$exposure <- exposure_values
+  ribbon_boundaries$outcome <- 0
   ribbon_boundaries$method <- method_name
-  ribbon_boundaries$x <- exposure_values
-  ribbon_boundaries$estimate <- 0
 
   do.call(ggplot2::geom_ribbon,
           modifyList(list(data = ribbon_boundaries,
