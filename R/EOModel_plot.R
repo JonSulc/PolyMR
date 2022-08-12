@@ -33,9 +33,9 @@ plot.EOModel <- function(eo_model,
 }
 
 #' @exportS3Method
-predict.EOModel <- function(eo_model, exposure) {
+predict.EOModel <- function(eo_model, exposure_values) {
   exposure_powers <- get_exposure_powers(eo_model)
-  outcome_predictors <- create_power_table(exposure,
+  outcome_predictors <- create_power_table(exposure_values,
                                            exposure_powers,
                                            "exposure")
   predict(eo_model$outcome_model, outcome_predictors)
@@ -55,6 +55,8 @@ plot_curve <- function(eo_model,
                        exposure_values,
                        method_name = "",
                        show_confidence_ribbons = TRUE,
+                       unscale_values = FALSE,
+                       phenotypes_summary = NULL,
                        ...) {
   if (is.null(coef(eo_model))) {
     to_plot <- data.frame(exposure = range(exposure_values),
@@ -65,11 +67,21 @@ plot_curve <- function(eo_model,
                           outcome = predict(eo_model, exposure_values),
                           method = method_name)
   }
-  p <- ggplot2::geom_line(data = to_plot,
-                          ggplot2::aes(linetype = method))
-  if (!show_confidence_ribbons)
-    return(p)
-  list(p, plot_confidence_ribbon(eo_model, exposure_values, method_name))
+  if (unscale_values) {
+    to_plot$exposure <- to_plot$exposure |>
+      unscale(phenotypes_summary$mean[1],
+              phenotypes_summary$sd[1])
+    to_plot$outcome <- to_plot$outcome |>
+      unscale(phenotypes_summary$mean[2],
+              phenotypes_summary$sd[2])
+  }
+  list(ggplot2::geom_line(data = to_plot, ggplot2::aes(linetype = method)),
+       if (show_confidence_ribbons)
+         plot_confidence_ribbon(eo_model,
+                                exposure_values,
+                                method_name,
+                                unscale_values = unscale_values,
+                                phenotypes_summary = phenotypes_summary))
 }
 
 get_confidence_boundaries <- function(
@@ -78,7 +90,9 @@ get_confidence_boundaries <- function(
     n_sim = 1000,
     interval = c(0.025, 0.975),
     to_keep = "(Intercept)|(exposure)" |>
-      grep(colnames(eo_model$vcov), value = TRUE)) {
+      grep(colnames(eo_model$vcov), value = TRUE),
+    unscale_values = FALSE,
+    phenotypes_summary = NULL) {
 
   exposure_powers <- get_exposure_powers(eo_model)
 
@@ -94,10 +108,22 @@ get_confidence_boundaries <- function(
                                  empirical = TRUE) %*%
     exposure_table
 
-  apply(random_curves, 2, quantile, interval) |>
+  boundaries <- apply(random_curves, 2, quantile, interval) |>
     t() |>
     as.data.frame() |>
     setNames(c("lower", "upper"))
+  boundaries$exposure <- exposure_values
+
+  if (!unscale_values)
+    return(boundaries)
+
+  boundaries$exposure <- boundaries$exposure |>
+    unscale(phenotypes_summary$mean[1],
+            phenotypes_summary$sd[1])
+  boundaries[c("lower", "upper")] <- boundaries[c("lower", "upper")] |>
+    unscale(phenotypes_summary$mean[2],
+            phenotypes_summary$sd[2])
+  boundaries
 }
 
 plot_confidence_ribbon <- function(eo_model,
@@ -108,7 +134,6 @@ plot_confidence_ribbon <- function(eo_model,
   ribbon_boundaries <- get_confidence_boundaries(eo_model,
                                                  exposure_values,
                                                  ...)
-  ribbon_boundaries$exposure <- exposure_values
   ribbon_boundaries$outcome <- 0
   ribbon_boundaries$method <- method_name
 
@@ -117,4 +142,12 @@ plot_confidence_ribbon <- function(eo_model,
                           ggplot2::aes(ymin = lower,
                                        ymax = upper)),
                      geom_ribbon_arguments))
+}
+
+rescale <- function(values, value_mean, value_sd) {
+  (values - value_mean) / value_sd
+}
+
+unscale <- function(values, value_mean, value_sd) {
+  values * value_sd + value_mean
 }
