@@ -137,10 +137,14 @@ polymr <- function(exposure,
   if (return_phenotypes_summary)
     results$phenotypes_summary <- get_phenotypes_summary(exposure, outcome)
 
-  if (return_binned_observations)
+  if (return_binned_observations) {
     results$binned_observations <- get_bins(exposure = exposure,
                                             outcome = outcome,
                                             bins = bins)
+    results$binned_observations_scaled <- get_bins(exposure = scale(exposure)[,],
+                                                   outcome = scale(outcome)[,],
+                                                   bins = bins)
+  }
 
   if (return_observational_function)
     results$observational <- new_EOModel(
