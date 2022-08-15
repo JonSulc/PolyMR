@@ -144,10 +144,6 @@ plot_confidence_ribbon <- function(eo_model,
                      geom_ribbon_arguments))
 }
 
-rescale <- function(values, value_mean, value_sd) {
-  (values - value_mean) / value_sd
-}
-
-unscale <- function(values, value_mean, value_sd) {
-  values * value_sd + value_mean
+unscale <- function(values, center, scale) {
+  values * scale + center
 }

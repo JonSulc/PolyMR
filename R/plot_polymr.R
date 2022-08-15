@@ -11,8 +11,12 @@ plot_polymr <- function(
     main_title = "Effects of exposure on outcome",
     subtitle = NULL,
     auto_subtitle = TRUE,
-    xlab = "Exposure (scaled)",
-    ylab = "Outcome (scaled)",
+    xlab = ifelse(scale_values,
+                  "Exposure (scaled)",
+                  "Exposure"),
+    ylab = ifelse(scale_values,
+                  "Outcome (scaled)",
+                  "Outcome"),
     ylims = NULL,
     show_legend = TRUE,
     scale_color_brewer_arguments = NULL,
@@ -22,8 +26,8 @@ plot_polymr <- function(
                           filename = output_filename)) {
 
   exposure_range <- range(polymr_results$binned_observations$exposure_median) |>
-    rescale(polymr_results$phenotypes_summary$mean[1],
-            polymr_results$phenotypes_summary$sd[1])
+    scale(center = polymr_results$phenotypes_summary$mean[1],
+          scale  = polymr_results$phenotypes_summary$sd[1])
 
   exposure_values <- seq(exposure_range[1],
                          exposure_range[2],
@@ -112,11 +116,11 @@ plot_binned_observations <- function(polymr_results,
 
   if (scale_values) {
     observations$exposure <- observations$exposure |>
-      rescale(polymr_results$phenotypes_summary$mean[1],
-              polymr_results$phenotypes_summary$sd[1])
+      scale(center = polymr_results$phenotypes_summary$mean[1],
+            scale  = polymr_results$phenotypes_summary$sd[1])
     observations$outcome <- observations$outcome |>
-      rescale(polymr_results$phenotypes_summary$mean[2],
-              polymr_results$phenotypes_summary$sd[2])
+      scale(center = polymr_results$phenotypes_summary$mean[2],
+            scale  = polymr_results$phenotypes_summary$sd[2])
   }
   ggplot2::geom_point(data = observations)
 }
