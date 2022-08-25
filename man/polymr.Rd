@@ -101,6 +101,10 @@ Returns a named list of results for PolyMR itself and the other
   \item \code{binned_observations} is a data.table with per-bin summary
     information, including the median exposure and the median, mean, and
     standard deviation of the outcome (binned on the exposure).
+  \item \code{binned_observations_scaled} is a data.table with per-bin
+    summary information for the scaled exposure and outcome (which will be
+    used for modeling), including the median exposure and the median, mean,
+    and standard deviation of the outcome (binned on the exposure).
   \item \code{observational} is a list-like object of class \code{EOModel}
     containing:
     \itemize{
@@ -139,6 +143,19 @@ Returns a named list of results for PolyMR itself and the other
 This function approximates a non-linear causal effect through a polynomial
 regression of observational data, correcting for confounding using an
 instrumental variable-based approach.
+}
+\details{
+The \code{polymr()} function estimates the causal effect of the
+  exposure on the outcome through polynomial regression, correcting for
+  confounding by including a polynomial of the control function. Full details
+  of the methods can be found in the article.
+}
+\note{
+Both the exposure and outcome will be standardized (centered to have
+  mean 0 and scaled to have standard deviation 1) prior to modeling. The
+  returned coefficients correspond to these transformed phenotypes. New data
+  can be transformed to this scale using the values saved in
+  \code{phenotypes_summary}.
 }
 \examples{
 simulated_data <- PolyMR:::new_PolyMRDataSim()
