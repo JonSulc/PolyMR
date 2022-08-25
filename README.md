@@ -6,7 +6,7 @@
 
 <!-- badges: end -->
 
-This package implements the PolyMR method (Sulc et al. 2022) for estimating non-linear causal effects of an exposure on an outcome. In short, this Mendelian randomization-based method uses genotypes as instrumental variables (IVs) to model the effect of an exposure on an outcome, correcting for confounding effects using a control function. The outcome is modeled as a sum of two polynomial functions, one for the causal effect and one for the control function.
+This package implements the PolyMR method (Sulc et al. 2022)[<https://doi.org/10.1016/j.xhgg.2022.100124>] for estimating non-linear causal effects of an exposure on an outcome. In short, this Mendelian randomization-based method uses genotypes as instrumental variables (IVs) to model the effect of an exposure on an outcome, correcting for confounding effects using a control function. The outcome is modeled as a sum of two polynomial functions, one for the causal effect and one for the control function.
 
 ## Installation
 
