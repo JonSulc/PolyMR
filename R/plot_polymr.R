@@ -98,10 +98,10 @@ get_subtitle <- function(eo_model,
   if (is.null(eo_model$pval_linear_model))
     return()
 
-  sprintf("%s non-linearity p-value: %.2e, %sariance: %.2e",
+  sprintf("%s non-linearity p-value: %.2e, %sariance explained: %.2e",
             method_name,
             eo_model$pval_linear_model,
-            ifelse(method_name == "observational", "V", "Causal v"),
+            ifelse(method_name == "Observational", "V", "Causal v"),
             eo_model$r_squared)
 }
 
