@@ -148,7 +148,7 @@ instrumental variable-based approach.
 The \code{polymr()} function estimates the causal effect of the
   exposure on the outcome through polynomial regression, correcting for
   confounding by including a polynomial of the control function. Full details
-  of the methods can be found in the article.
+  of the method can be found in the article (\code{citation("PolyMR")}).
 }
 \note{
 Both the exposure and outcome will be standardized (centered to have

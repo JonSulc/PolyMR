@@ -1,3 +1,61 @@
+#' Plot results of PolyMR
+#'
+#' This function provides an easy interface to quickly visualize the results
+#' from PolyMR using \code{ggplot2}.
+#'
+#' @param polymr_results A list containing the results from the \code{polymr}
+#'   function.
+#'
+#' @param show_polymr Boolean indicating whether or not to plot the inferred
+#'   causal function (default is TRUE).
+#' @param show_observational Boolean indicating whether or not to plot the
+#'   observed association. Requires the observational association to have been
+#'   estimated by the \code{polymr} function using
+#'   \code{return_observational_function = TRUE}. Default is TRUE.
+#' @param show_binned_observations Boolean indicating whether or not to plot the
+#'   binned observations, specifically the median exposure and outcome for each
+#'   bin. Requires the binned values to have been returned by the \code{polymr}
+#'   function using \code{return_binned_observations = TRUE}. Default is TRUE.
+#' @param show_confidence_ribbons Boolean indicating whether or not to display
+#'   the 95\% confidence hulls (default is TRUE).
+#' @param scale_values Boolean indicating whether or not to leave phenotypes
+#'   (exposure and outcome) standardized with mean 0 and variance 1 or convert
+#'   them back to their original range using the values in
+#'   \code{phenotypes_summary}. Default is TRUE, indicating that the values
+#'   will be plotted on a standard scale.
+#' @param output_filename The file name of the plot to be saved, if any. This
+#'   will override any \code{filename} provided in \code{ggsave_options}.
+#'   Default is \code{NULL}, in which case the plot will not be saved.
+#' @param main_title Main title of the plot (default is "Effect of exposure on
+#'   outcome").
+#' @param subtitle Subtitle of the plot. If \code{auto_subtitle} is enabled,
+#'   this will be prepended to the automatic subtitle. Default is \code{NULL}.
+#' @param auto_subtitle Whether to create and include a summary of results as
+#'   subtitle. This summary includes the p-values and variance explained for the
+#'   plotted functions (total variance for the observational association,
+#'   causal variance for PolyMR). Default is \code{TRUE}.
+#' @param xlab Label for the X axis. Default is "Exposure (scaled)" if
+#'   \code{scale_values} is \code{TRUE} and "Exposure" otherwise.
+#' @param ylab Label for the Y axis. Default is "Outcome (scaled)" if
+#'   \code{scale_values} is \code{TRUE} and "Outcome" otherwise.
+#' @param ylims An optional vector of length 2 defining the boundaries of the
+#'   plotted region on the Y axis. Default is NULL, relying on \code{ggplot2}
+#'   standard behavior.
+#' @param show_legend Whether or not to display the legend next to the plot
+#'   (default is \code{TRUE}).
+#' @param ggsave_options A list of options to provide to \code{ggplot2::ggsave}.
+#'   Ignored if no filename is specified here or using \code{output_filename}.
+#'   Default is a list specifying a \code{width} and \code{height} both equal to
+#'   18 \code{cm}.
+#' @param n_points Number of points to plot in rendering the curve. Default is
+#'   1000, resulting in a smooth enough curve for most purposes.
+#'
+#' @return An object of the \code{gg} and \code{ggplot} classes.
+#'
+#' @details The plot is created using the \code{gpplot2} library and various
+#'   functions therein. The resulting plot can be customized using the standard
+#'   \code{ggplot2} functions.
+#'
 #' @export
 plot_polymr <- function(
     polymr_results,
@@ -7,7 +65,6 @@ plot_polymr <- function(
     show_confidence_ribbons = TRUE,
     scale_values = TRUE,
     output_filename = NULL,
-    n_points = 1000,
     main_title = "Effects of exposure on outcome",
     subtitle = NULL,
     auto_subtitle = TRUE,
@@ -19,11 +76,10 @@ plot_polymr <- function(
                   "Outcome"),
     ylims = NULL,
     show_legend = TRUE,
-    scale_color_brewer_arguments = NULL,
     ggsave_options = list(width = 18,
                           height = 18,
-                          units = "cm",
-                          filename = output_filename)) {
+                          units = "cm"),
+    n_points = 1000) {
 
   exposure_range <- range(polymr_results$binned_observations$exposure_median) |>
     scale(center = polymr_results$phenotypes_summary$mean[1],
@@ -79,16 +135,14 @@ plot_polymr <- function(
   if (!is.null(ylims))
     p <- p + ggplot2::coord_cartesian(ylim = ylims)
 
-  if (!is.null(scale_color_brewer_arguments))
-    p <- p + do.call(ggplot2::scale_color_brewer, scale_color_brewer_arguments)
-
-  if (!show_legend) {
+  if (!show_legend)
     p <- p + ggplot2::theme(legend.position = "none")
-  }
 
-  if (!is.null(ggsave_options$filename)) {
+  if (!is.null(output_filename))
+    ggsave_options$filename <- output_filename
+
+  if (!is.null(ggsave_options$filename))
     do.call(ggplot2::ggsave, ggsave_options)
-  }
 
   p
 }
