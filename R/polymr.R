@@ -228,7 +228,8 @@ select_best_outcome_model <- function(eo_model,
     }
   }
 
-  while (any(!are_terms_significant(eo_model, p_thr_drop)) && eo_model$exposure_powers > 0)
+  while (any(!are_terms_significant(eo_model, p_thr_drop)) &&
+         length(eo_model$exposure_powers) > 0)
     eo_model <-
       drop_least_significant_term(
         eo_model,

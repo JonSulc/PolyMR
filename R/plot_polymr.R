@@ -52,9 +52,8 @@
 #'
 #' @return An object of the \code{gg} and \code{ggplot} classes.
 #'
-#' @details The plot is created using the \code{gpplot2} library and various
-#'   functions therein. The resulting plot can be customized using the standard
-#'   \code{ggplot2} functions.
+#' @details The plot is created using the \code{gpplot2} library. The resulting
+#'   plot can be customized using the standard \code{ggplot2} functions.
 #'
 #' @export
 plot_polymr <- function(
