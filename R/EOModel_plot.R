@@ -1,7 +1,11 @@
 get_exposure_powers <- function(eo_model) {
   eo_coefficients <- coef(eo_model)
-  grep("[0-9]+",
-       grep("^exposure([0-9]+)$", names(eo_coefficients))) |>
+  is_exposure <- grepl("^exposure[0-9]+$",
+                       names(eo_coefficients))
+  exposure_terms <- eo_coefficients[is_exposure] |>
+    names()
+  regmatches(exposure_terms,
+             regexpr("[0-9]+", exposure_terms)) |>
     as.numeric()
 }
 
