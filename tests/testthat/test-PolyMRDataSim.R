@@ -11,7 +11,7 @@ test_that("Simulated genotype generation works", {
                                      finalize = FALSE)$genotypes),
                c(1e4, 35))
 
-  expect_true(my_data$genotypes >= 0 && my_data$genotypes <= 2)
+  expect_true(all(my_data$genotypes >= 0) && all(my_data$genotypes <= 2))
   expect_equal(apply(my_data$genotypes, 2, mean), 2*my_data$mafs, tolerance = .1)
   expect_equal(my_data$exposure_coefficients|>length(), my_data$n_exposure_snps)
   expect_equal(sum(my_data$exposure_coefficients^2), my_data$exposure_heritability)
