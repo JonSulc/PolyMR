@@ -9,9 +9,8 @@ model_exposure <- function(polymr_model) {
 
 
 create_exposure_model <- function(polymr_model) {
-  if (is.null(polymr_model$beta_exposure))
-    polymr_model$exposure_model <-
-      lm(polymr_model$exposure ~ polymr_model$genotypes)
+  polymr_model$exposure_model <-
+    lm(polymr_model$exposure ~ polymr_model$genotypes)
 
   polymr_model |>
     calculate_control_function()
@@ -39,7 +38,7 @@ filter_reverse_snps <- function(polymr_model) {
     se_exposure <- polymr_model$se_exposure
   } else {
     beta_exposure <- coef(polymr_model$exposure_model)[-1]
-    se_exposure <- summary(polymr_model$exposure_model)$coef[-1, 2]
+    se_exposure <- summary(polymr_model$exposure_model)$coefs[-1, 2]
   }
   genotype_outcome_stats <-
     summary(lm(polymr_model$outcome ~ polymr_model$genotypes))$coefficients[-1, 1:2]
