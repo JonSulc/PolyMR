@@ -8,6 +8,13 @@
 #' @param outcome A vector containing the outcome values for each individual.
 #' @param genotypes The NxM genetic matrix, with a column for each variant and a
 #'   row for each individual.
+#' @param beta_exposure A vector containing genotype-exposure effect estimates
+#'   from an external source. Default is NULL, in which case they are calculated
+#'   in-sample.
+#' @param se_exposure A vector containing the standard errors of the genotype-
+#'   exposure effect estimates, from an external source. These are only used if
+#'   IV filtering has been selected (through setting \code{reverse_t_thr}) and
+#'   a corresponding \code{beta_exposure} vector has been provided.
 #' @param return_phenotypes_summary Whether to return a data.table containing
 #'   the median, mean, and standard deviation of both exposure and outcome
 #'   (default is TRUE).
@@ -132,6 +139,8 @@
 polymr <- function(exposure,
                    outcome,
                    genotypes,
+                   beta_exposure = NULL,
+                   se_exposure = NULL,
                    return_phenotypes_summary = TRUE,
                    return_observational_function = TRUE,
                    return_binned_observations = TRUE,
@@ -180,6 +189,8 @@ polymr <- function(exposure,
     new_PolyMRModel(exposure = exposure,
                     outcome = outcome,
                     genotypes = genotypes,
+                    beta_exposure = beta_exposure,
+                    se_exposure = se_exposure,
                     exposure_powers = starting_exposure_powers,
                     reverse_t_thr = reverse_t_thr,
                     max_exposure_power = max_exposure_power,

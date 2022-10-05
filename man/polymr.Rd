@@ -8,6 +8,8 @@ polymr(
   exposure,
   outcome,
   genotypes,
+  beta_exposure = NULL,
+  se_exposure = NULL,
   return_phenotypes_summary = TRUE,
   return_observational_function = TRUE,
   return_binned_observations = TRUE,
@@ -29,6 +31,15 @@ polymr(
 
 \item{genotypes}{The NxM genetic matrix, with a column for each variant and a
 row for each individual.}
+
+\item{beta_exposure}{A vector containing genotype-exposure effect estimates
+from an external source. Default is NULL, in which case they are calculated
+in-sample.}
+
+\item{se_exposure}{A vector containing the standard errors of the genotype-
+exposure effect estimates, from an external source. These are only used if
+IV filtering has been selected (through setting \code{reverse_t_thr}) and
+a corresponding \code{beta_exposure} vector has been provided.}
 
 \item{return_phenotypes_summary}{Whether to return a data.table containing
 the median, mean, and standard deviation of both exposure and outcome

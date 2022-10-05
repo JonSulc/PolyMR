@@ -38,9 +38,9 @@ update_control_function_powers <- function(polymr_model,
 
 create_outcome_predictors_table.PolyMRModel <- function(polymr_model) {
   polymr_model <- NextMethod()
-  polymr_model$outcome_predictors <-
-    cbind(polymr_model$outcome_predictors,
-          create_power_table(residuals(polymr_model$exposure_model),
+
+  polymr_model$outcome_predictors <- polymr_model$outcome_predictors |>
+    cbind(create_power_table(polymr_model$cf,
                              polymr_model$control_function_powers,
                              "cf"))
   polymr_model
