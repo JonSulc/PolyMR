@@ -1,3 +1,4 @@
+#' @import data.table
 
 get_bins <- function(model_data = NULL,
                      exposure = model_data$exposure,

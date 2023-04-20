@@ -159,12 +159,11 @@ Both the exposure and outcome will be standardized (centered to have
 }
 \examples{
 simulated_data <- PolyMR:::new_PolyMRDataSim()
-polymr_results <- polymr(exposure  = simulated_data$exposure,
-                         outcome   = simulated_data$outcome,
-                         genotypes = simulated_data$genotypes,
-                         reverse_t_thr = 0,
-                         p_thr_drop = NULL)
-plot_polymr(polymr_results)
+polymr(exposure  = simulated_data$exposure,
+       outcome   = simulated_data$outcome,
+       genotypes = simulated_data$genotypes,
+       reverse_t_thr = 0,
+       p_thr_drop = NULL)
 
 
 }

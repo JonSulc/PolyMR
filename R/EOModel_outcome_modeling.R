@@ -1,3 +1,5 @@
+#' @import data.table
+
 model_outcome <- function(eo_model) {
   eo_model <- create_outcome_predictors_table(eo_model)
   eo_model$outcome_model <-

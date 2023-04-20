@@ -1,3 +1,6 @@
+#' @import data.table
+#' @importFrom lmtest lrtest
+
 calculate_summary_statistics <- function(x, ...){
   UseMethod("calculate_summary_statistics")
 }

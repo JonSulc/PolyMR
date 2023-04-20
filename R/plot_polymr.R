@@ -55,6 +55,9 @@
 #' @details The plot is created using the \code{gpplot2} library. The resulting
 #'   plot can be customized using the standard \code{ggplot2} functions.
 #'
+
+#' @import ggplot2
+#'
 #' @export
 plot_polymr <- function(
     polymr_results,

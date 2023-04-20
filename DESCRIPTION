@@ -1,7 +1,7 @@
 Package: PolyMR
 Type: Package
 Title: Model Non-Linear Causal Effects Through Polynomial Regression
-Version: 2.1
+Version: 2.1.1
 Author: Jonathan Sulc
 Maintainer: Jonathan Sulc <jonsulc@gmail.com>
 Description: Uses a control function-based approach to model non-linear causal

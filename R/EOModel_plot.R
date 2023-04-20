@@ -1,3 +1,6 @@
+#' @import ggplot2
+#' @importFrom MASS mvrnorm
+
 get_exposure_powers <- function(eo_model) {
   eo_coefficients <- coef(eo_model)
   is_exposure <- grepl("^exposure[0-9]+$",
